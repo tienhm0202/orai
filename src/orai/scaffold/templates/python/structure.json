@@ -1,0 +1,29 @@
+{
+  "dirs": [
+    "app",
+    "app/.agents/tasks",
+    "app/.agents/scripts",
+    "app/.agents/kb",
+    "app/.agents/kb/architecture",
+    "app/.agents/kb/architecture/decisions",
+    "app/.agents/kb/phases",
+    "app/.agents/kb/agent-contexts",
+    "app/.agents/kb/shared",
+    "app/.agents/kb/task-outputs",
+    "app/src/{{ project_name }}",
+    "app/tests"
+  ],
+  "files": {
+    "app/pyproject.toml": "pyproject.toml.j2",
+    "app/src/{{ project_name }}/__init__.py": "init.py.j2",
+    "app/src/{{ project_name }}/main.py": "main.py.j2",
+    "app/tests/__init__.py": "tests_init.py.j2",
+    "app/tests/test_main.py": "test_main.py.j2",
+    "app/.agents/agents.json": "agents.json.j2",
+    "app/.agents/Skills.md": "Skills.md.j2",
+    "app/.agents/orchestration.json": "orchestration.json.j2",
+    "app/.agents/kb/_index.json": "kb_index.json.j2",
+    "app/.agents/kb/shared/tdd-guidelines.md": "tdd-guidelines.md.j2",
+    "CLAUDE.md": "CLAUDE.md.j2"
+  }
+}

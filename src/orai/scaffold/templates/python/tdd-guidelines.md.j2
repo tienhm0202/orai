@@ -1,0 +1,33 @@
+# TDD Guidelines
+
+## Core Principles
+
+1. **Red-Green-Refactor**: Write a failing test first, implement just enough to pass, then clean up.
+2. **One assertion per test**: Each test should verify one specific behavior.
+3. **Test names describe behavior**: `test_returns_404_when_user_not_found`, not `test_user`.
+
+## Workflow
+
+1. Write a test that describes the expected behavior
+2. Run the test — it must FAIL (red)
+3. Write the minimum code to make the test pass (green)
+4. Run all tests — they must ALL pass
+5. Refactor code without changing behavior
+6. Run all tests again — they must STILL pass
+
+## Definition of Done
+
+- [ ] Test written BEFORE implementation
+- [ ] Test covers happy path
+- [ ] Test covers at least one edge case
+- [ ] Test covers error handling
+- [ ] All tests pass (no regressions)
+- [ ] Code is clean and follows project conventions
+- [ ] No linting errors
+
+## What NOT to Do
+
+- Don't write implementation code before tests
+- Don't skip edge case testing
+- Don't mark a task done if any test is failing
+- Don't disable tests to make the suite pass

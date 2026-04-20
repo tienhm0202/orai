@@ -1,0 +1,33 @@
+{
+  "dirs": [
+    "app",
+    "app/.agents/tasks",
+    "app/.agents/scripts",
+    "app/.agents/kb",
+    "app/.agents/kb/architecture",
+    "app/.agents/kb/architecture/decisions",
+    "app/.agents/kb/phases",
+    "app/.agents/kb/agent-contexts",
+    "app/.agents/kb/shared",
+    "app/.agents/kb/task-outputs",
+    "app/src",
+    "app/src/app",
+    "app/src/app/api",
+    "app/src/components",
+    "app/public"
+  ],
+  "files": {
+    "app/package.json": "package.json.j2",
+    "app/tsconfig.json": "tsconfig.json.j2",
+    "app/tailwind.config.ts": "tailwind.config.ts.j2",
+    "app/src/app/layout.tsx": "layout.tsx.j2",
+    "app/src/app/page.tsx": "page.tsx.j2",
+    "app/src/app/globals.css": "globals.css.j2",
+    "app/.agents/agents.json": "agents.json.j2",
+    "app/.agents/Skills.md": "Skills.md.j2",
+    "app/.agents/orchestration.json": "orchestration.json.j2",
+    "app/.agents/kb/_index.json": "kb_index.json.j2",
+    "app/.agents/kb/shared/tdd-guidelines.md": "tdd-guidelines.md.j2",
+    "CLAUDE.md": "CLAUDE.md.j2"
+  }
+}

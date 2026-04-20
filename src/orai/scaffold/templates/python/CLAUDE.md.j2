@@ -1,0 +1,24 @@
+# {{ project_name }}
+
+## Project Type
+Python application with modern tooling.
+
+## Architecture Rules
+- Source code in `src/{{ project_name }}/`.
+- Tests in `tests/` using pytest.
+- Type hints on all public functions.
+- Pydantic for data validation.
+
+## Commands
+- `python -m pytest` — run tests
+- `ruff check .` — lint
+- `ruff format .` — format
+
+## Style Guide
+- Follow PEP 8. Max line length 88 (Ruff default).
+- Docstrings: Google style.
+- No wildcard imports.
+
+## Task Context
+This project is orchestrated by orai. Task files are in `.agents/tasks/`.
+Do NOT modify files in `.agents/`.

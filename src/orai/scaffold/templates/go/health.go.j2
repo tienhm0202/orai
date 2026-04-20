@@ -1,0 +1,28 @@
+package handler
+
+import (
+	"time"
+
+	"github.com/gofiber/fiber/v2"
+)
+
+func HealthCheck(c *fiber.Ctx) error {
+	return c.JSON(fiber.Map{
+		"status":    "ok",
+		"timestamp": time.Now().UTC().Format(time.RFC3339),
+	})
+}
+
+func ErrorHandler(c *fiber.Ctx, err error) error {
+	status := fiber.StatusInternalServerError
+	message := "Internal Server Error"
+
+	if e, ok := err.(*fiber.Error); ok {
+		status = e.Code
+		message = e.Message
+	}
+
+	return c.Status(status).JSON(fiber.Map{
+		"error": message,
+	})
+}

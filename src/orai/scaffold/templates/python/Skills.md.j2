@@ -1,0 +1,42 @@
+# Agent Skills Reference — {{ project_name }}
+
+Agents invoke scripts via the Bash tool using paths relative to the project root.
+Scripts live in `.agents/scripts/`.
+
+---
+
+## backend
+
+Skills for implementing Python backend logic.
+
+<!-- Add ### script-name.sh entries below as you create scripts in .agents/scripts/ -->
+
+### example: run-tests.sh
+
+**Purpose**: Run the pytest suite.
+
+**Usage**:
+```bash
+bash .agents/scripts/run-tests.sh [--cov]
+```
+
+**Options**:
+- `--cov` — Enable coverage reporting
+
+**Expected output**: Test summary. Exit code 0 on pass.
+
+---
+
+### example: generate-migration.sh
+
+**Purpose**: Generate an Alembic migration from current model changes.
+
+**Usage**:
+```bash
+bash .agents/scripts/generate-migration.sh "<message>"
+```
+
+**Arguments**:
+- `$1` — Migration message (required)
+
+**Expected output**: Path to the new migration file in `alembic/versions/`.

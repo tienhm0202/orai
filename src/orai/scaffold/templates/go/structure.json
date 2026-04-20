@@ -1,0 +1,33 @@
+{
+  "dirs": [
+    "app",
+    "app/.agents/tasks",
+    "app/.agents/scripts",
+    "app/.agents/kb",
+    "app/.agents/kb/architecture",
+    "app/.agents/kb/architecture/decisions",
+    "app/.agents/kb/phases",
+    "app/.agents/kb/agent-contexts",
+    "app/.agents/kb/shared",
+    "app/.agents/kb/task-outputs",
+    "app/cmd/{{ project_name }}",
+    "app/internal/handler",
+    "app/internal/service",
+    "app/internal/repository",
+    "app/internal/model",
+    "app/migrations",
+    "app/sql"
+  ],
+  "files": {
+    "app/cmd/{{ project_name }}/main.go": "main.go.j2",
+    "app/internal/handler/health.go": "health.go.j2",
+    "app/internal/handler/health_test.go": "health_test.go.j2",
+    "app/go.mod": "go.mod.j2",
+    "app/.agents/agents.json": "agents.json.j2",
+    "app/.agents/Skills.md": "Skills.md.j2",
+    "app/.agents/orchestration.json": "orchestration.json.j2",
+    "app/.agents/kb/_index.json": "kb_index.json.j2",
+    "app/.agents/kb/shared/tdd-guidelines.md": "tdd-guidelines.md.j2",
+    "CLAUDE.md": "CLAUDE.md.j2"
+  }
+}

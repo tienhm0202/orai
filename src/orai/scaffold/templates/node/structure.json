@@ -1,0 +1,31 @@
+{
+  "dirs": [
+    "app",
+    "app/.agents/tasks",
+    "app/.agents/scripts",
+    "app/.agents/kb",
+    "app/.agents/kb/architecture",
+    "app/.agents/kb/architecture/decisions",
+    "app/.agents/kb/phases",
+    "app/.agents/kb/agent-contexts",
+    "app/.agents/kb/shared",
+    "app/.agents/kb/task-outputs",
+    "app/src",
+    "app/src/routes",
+    "app/src/middleware",
+    "app/src/db",
+    "app/tests"
+  ],
+  "files": {
+    "app/package.json": "package.json.j2",
+    "app/tsconfig.json": "tsconfig.json.j2",
+    "app/src/index.ts": "index.ts.j2",
+    "app/tests/example.test.ts": "example.test.ts.j2",
+    "app/.agents/agents.json": "agents.json.j2",
+    "app/.agents/Skills.md": "Skills.md.j2",
+    "app/.agents/orchestration.json": "orchestration.json.j2",
+    "app/.agents/kb/_index.json": "kb_index.json.j2",
+    "app/.agents/kb/shared/tdd-guidelines.md": "tdd-guidelines.md.j2",
+    "CLAUDE.md": "CLAUDE.md.j2"
+  }
+}

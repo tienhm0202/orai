@@ -1,0 +1,333 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>opsrun &mdash; {{ project_name }}</title>
+  <style>
+    *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+
+    :root {
+      --bg:       #0f1117;
+      --bg-panel: #161822;
+      --bg-hover: #1e2030;
+      --border:   #2a2d3a;
+      --text:     #e2e4ed;
+      --text-dim: #8b8fa3;
+      --accent:   #6c8cff;
+      --green:    #34d399;
+      --yellow:   #fbbf24;
+      --red:      #f87171;
+      --gray:     #6b7280;
+      --font:     -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+      --mono:     'JetBrains Mono', 'Fira Code', monospace;
+    }
+
+    body {
+      font-family: var(--font);
+      background: var(--bg);
+      color: var(--text);
+      height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+    }
+
+    /* Header */
+    .header {
+      display: flex;
+      align-items: center;
+      gap: 1rem;
+      padding: 0.75rem 1.5rem;
+      background: var(--bg-panel);
+      border-bottom: 1px solid var(--border);
+      flex-shrink: 0;
+    }
+    .header .logo {
+      font-weight: 700;
+      font-size: 1.1rem;
+      color: var(--accent);
+      letter-spacing: 0.05em;
+    }
+    .header .divider { color: var(--border); }
+    .header .proj-name { font-weight: 600; }
+    .header .proj-folder { color: var(--text-dim); font-size: 0.85rem; }
+
+    /* Layout */
+    .layout { display: flex; flex: 1; overflow: hidden; }
+
+    /* Sidebar */
+    .sidebar {
+      width: 260px;
+      background: var(--bg-panel);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      flex-shrink: 0;
+      padding: 0.5rem 0;
+    }
+    .sidebar-item {
+      display: flex;
+      align-items: center;
+      gap: 0.6rem;
+      padding: 0.6rem 1rem;
+      cursor: pointer;
+      transition: background 0.15s;
+      border-left: 3px solid transparent;
+    }
+    .sidebar-item:hover { background: var(--bg-hover); }
+    .sidebar-item.active {
+      background: var(--bg-hover);
+      border-left-color: var(--accent);
+    }
+    .sidebar-item .phase-num {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      color: var(--text-dim);
+      min-width: 2.5rem;
+    }
+    .sidebar-item .phase-title {
+      flex: 1;
+      font-size: 0.9rem;
+      white-space: nowrap;
+      overflow: hidden;
+      text-overflow: ellipsis;
+    }
+    .sidebar-item .phase-badge {
+      font-size: 0.75rem;
+      color: var(--text-dim);
+    }
+
+    /* Status dots */
+    .status-dot {
+      width: 10px;
+      height: 10px;
+      border-radius: 50%;
+      flex-shrink: 0;
+    }
+    .status-dot.done    { background: var(--green); }
+    .status-dot.running { background: var(--yellow); animation: pulse 1.5s infinite; }
+    .status-dot.pending { background: var(--gray); }
+    .status-dot.failed  { background: var(--red); }
+
+    @keyframes pulse { 0%, 100% { opacity: 1; } 50% { opacity: 0.4; } }
+
+    /* Main */
+    .main {
+      flex: 1;
+      overflow-y: auto;
+      padding: 1.5rem 2rem;
+    }
+    .main h2 { font-size: 1.25rem; margin-bottom: 0.25rem; }
+    .main .phase-desc { color: var(--text-dim); font-size: 0.9rem; margin-bottom: 1.5rem; }
+    .main .phase-meta {
+      display: flex; gap: 1.5rem; margin-bottom: 1.5rem; font-size: 0.85rem;
+    }
+    .main .phase-meta span { color: var(--text-dim); }
+    .main .phase-meta strong { color: var(--text); }
+
+    /* Task table */
+    .task-table { width: 100%; border-collapse: collapse; font-size: 0.9rem; }
+    .task-table th {
+      text-align: left;
+      padding: 0.5rem 0.75rem;
+      border-bottom: 2px solid var(--border);
+      color: var(--text-dim);
+      font-weight: 600;
+      font-size: 0.8rem;
+      text-transform: uppercase;
+      letter-spacing: 0.04em;
+    }
+    .task-table td {
+      padding: 0.5rem 0.75rem;
+      border-bottom: 1px solid var(--border);
+    }
+    .task-table tr:hover td { background: var(--bg-hover); }
+    .task-table .task-id { font-family: var(--mono); color: var(--accent); font-size: 0.85rem; }
+
+    /* Badges */
+    .badge {
+      display: inline-block;
+      padding: 0.15rem 0.5rem;
+      border-radius: 4px;
+      font-size: 0.75rem;
+      font-weight: 600;
+      text-transform: uppercase;
+    }
+    .badge.done    { background: rgba(52,211,153,0.15); color: var(--green); }
+    .badge.running { background: rgba(251,191,36,0.15); color: var(--yellow); }
+    .badge.pending { background: rgba(107,114,128,0.15); color: var(--gray); }
+    .badge.failed  { background: rgba(248,113,113,0.15); color: var(--red); }
+    .badge.paused  { background: rgba(251,191,36,0.1);  color: var(--yellow); }
+    .badge.skipped { background: rgba(107,114,128,0.1); color: var(--gray); }
+
+    .task-error { color: var(--red); font-size: 0.8rem; margin-top: 0.25rem; }
+
+    /* Connection indicator */
+    .conn-status {
+      position: fixed;
+      bottom: 1rem;
+      right: 1.5rem;
+      font-size: 0.75rem;
+      padding: 0.25rem 0.75rem;
+      border-radius: 4px;
+      background: var(--bg-panel);
+      border: 1px solid var(--border);
+    }
+    .conn-status.connected { border-color: var(--green); color: var(--green); }
+    .conn-status.disconnected { border-color: var(--red); color: var(--red); }
+
+    .empty-state {
+      display: flex; align-items: center; justify-content: center;
+      height: 100%; color: var(--text-dim); font-size: 1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <span class="logo">opsrun</span>
+    <span class="divider">&#9474;</span>
+    <span class="proj-name" id="header-project">{{ project_name }}</span>
+    <span class="proj-folder">({{ project_root }})</span>
+  </div>
+
+  <div class="layout">
+    <div class="sidebar" id="sidebar"></div>
+    <div class="main" id="main">
+      <div class="empty-state">Select a phase to view tasks</div>
+    </div>
+  </div>
+
+  <div class="conn-status disconnected" id="conn-status">connecting...</div>
+
+  <script>
+    const phases = {{ phases | tojson }};
+    let selectedPhase = null;
+    let phaseData = {};
+
+    const sidebarEl    = document.getElementById('sidebar');
+    const mainEl       = document.getElementById('main');
+    const connStatusEl = document.getElementById('conn-status');
+
+    function renderSidebar() {
+      sidebarEl.innerHTML = '';
+      for (const pn of phases) {
+        const pd = phaseData[pn];
+        if (!pd) continue;
+        const s = pd.summary;
+
+        const item = document.createElement('div');
+        item.className = 'sidebar-item' + (selectedPhase === pn ? ' active' : '');
+        item.dataset.phase = pn;
+        item.onclick = () => selectPhase(pn);
+
+        const dot   = document.createElement('span');
+        dot.className = 'status-dot ' + s.status;
+
+        const num   = document.createElement('span');
+        num.className = 'phase-num';
+        num.textContent = 'Phase ' + pn;
+
+        const title = document.createElement('span');
+        title.className = 'phase-title';
+        title.textContent = s.title;
+        title.title = s.title;
+
+        const badge = document.createElement('span');
+        badge.className = 'phase-badge';
+        badge.textContent = s.done + '/' + s.total;
+
+        item.append(dot, num, title, badge);
+        sidebarEl.appendChild(item);
+      }
+    }
+
+    function selectPhase(pn) {
+      selectedPhase = pn;
+      renderSidebar();
+      renderPhase(pn);
+    }
+
+    function renderPhase(pn) {
+      const pd = phaseData[pn];
+      if (!pd || !pd.tasks) return;
+      const s = pd.summary;
+      const tasks = pd.tasks;
+
+      mainEl.innerHTML =
+        '<h2>Phase ' + pn + ': ' + s.title + '</h2>' +
+        '<div class="phase-meta">' +
+          '<span><strong>' + s.done + '</strong> / ' + s.total + ' done</span>' +
+          (s.failed ? '<span><strong style="color:var(--red)">' + s.failed + ' failed</strong></span>' : '') +
+          '<span>Status: <span class="badge ' + s.status + '">' + s.status + '</span></span>' +
+        '</div>' +
+        '<table class="task-table">' +
+          '<thead><tr>' +
+            '<th>ID</th><th>Status</th><th>Model</th><th>Priority</th><th>Description</th>' +
+          '</tr></thead>' +
+          '<tbody>' +
+            tasks.map(function(t) {
+              return '<tr>' +
+                '<td class="task-id">' + t.id + '</td>' +
+                '<td><span class="badge ' + t.status + '">' + t.status + '</span></td>' +
+                '<td>' + t.target_model + '</td>' +
+                '<td>' + t.priority + '</td>' +
+                '<td>' + t.description +
+                  (t.error ? '<div class="task-error">' + t.error + '</div>' : '') +
+                '</td>' +
+              '</tr>';
+            }).join('') +
+          '</tbody>' +
+        '</table>';
+    }
+
+    function connectSSE() {
+      var evt = new EventSource('/api/sse');
+
+      evt.onopen = function() {
+        connStatusEl.textContent = 'connected';
+        connStatusEl.className = 'conn-status connected';
+      };
+
+      evt.addEventListener('message', function(e) {
+        var msg = JSON.parse(e.data);
+
+        if (msg.type === 'init') {
+          for (var i = 0; i < msg.phases.length; i++) {
+            var p = msg.phases[i];
+            phaseData[p.phase_number] = { summary: p, tasks: null };
+          }
+          for (var j = 0; j < phases.length; j++) {
+            (function(pn) {
+              fetch('/api/phase/' + pn)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                  phaseData[pn] = { summary: data, tasks: data.tasks };
+                  renderSidebar();
+                  if (selectedPhase === pn) renderPhase(pn);
+                });
+            })(phases[j]);
+          }
+          renderSidebar();
+        }
+
+        if (msg.type === 'phase_update') {
+          var pn = msg.phase_number;
+          phaseData[pn] = { summary: msg.summary, tasks: msg.tasks };
+          renderSidebar();
+          if (selectedPhase === pn) renderPhase(pn);
+        }
+      });
+
+      evt.onerror = function() {
+        connStatusEl.textContent = 'disconnected';
+        connStatusEl.className = 'conn-status disconnected';
+        evt.close();
+        setTimeout(connectSSE, 3000);
+      };
+    }
+
+    renderSidebar();
+    connectSSE();
+  </script>
+</body>
+</html>

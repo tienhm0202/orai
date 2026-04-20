@@ -1,0 +1,24 @@
+# {{ project_name }} — Go + Fiber Backend
+
+## Stack
+- **Language**: Go 1.23
+- **Framework**: Fiber v2
+- **Database**: database/sql + sqlc
+- **Migrations**: golang-migrate
+- **Testing**: testing (stdlib) + testify
+
+## Commands
+- `go run ./cmd/{{ project_name }}` — Start server
+- `go test ./...` — Run all tests
+- `go fmt ./...` — Format code
+- `go vet ./...` — Run static analysis
+- `migrate -path migrations -database $DATABASE_URL up` — Run migrations
+
+## Structure
+- `cmd/` — Application entry points
+- `internal/handler/` — HTTP handlers
+- `internal/service/` — Business logic
+- `internal/repository/` — Data access
+- `internal/model/` — Domain models
+- `migrations/` — SQL migration files
+- `sql/` — sqlc query definitions

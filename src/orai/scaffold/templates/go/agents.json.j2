@@ -1,0 +1,50 @@
+{
+  "agents": [
+    {
+      "name": "Solution Architect",
+      "email": "architect@{{ project_name }}.local",
+      "role": "architect",
+      "skills": ["architecture-design", "tech-stack-selection"],
+      "scripts": [],
+      "model": "opus",
+      "system_prompt_template": "architect"
+    },
+    {
+      "name": "Project Manager",
+      "email": "pm@{{ project_name }}.local",
+      "role": "project_manager",
+      "skills": ["task-breakdown", "tdd-enforcement"],
+      "scripts": [],
+      "model": "opus",
+      "system_prompt_template": "pm"
+    },
+    {
+      "name": "Backend Developer",
+      "email": "backend@{{ project_name }}.local",
+      "role": "backend",
+      "language_stack": "go",
+      "skills": ["backend-api", "database-migrations", "testing"],
+      "scripts": ["run-tests.sh"],
+      "model": "sonnet",
+      "system_prompt_template": "backend-go"
+    },
+    {
+      "name": "Frontend Developer",
+      "email": "frontend@{{ project_name }}.local",
+      "role": "frontend",
+      "skills": ["frontend"],
+      "scripts": [],
+      "model": "sonnet",
+      "system_prompt_template": "frontend"
+    },
+    {
+      "name": "Tester",
+      "email": "tester@{{ project_name }}.local",
+      "role": "tester",
+      "skills": ["testing", "bug-reporting"],
+      "scripts": ["run-tests.sh"],
+      "model": "sonnet",
+      "system_prompt_template": "tester"
+    }
+  ]
+}

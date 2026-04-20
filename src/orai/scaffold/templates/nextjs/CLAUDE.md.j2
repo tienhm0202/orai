@@ -1,0 +1,26 @@
+# {{ project_name }}
+
+## Project Type
+Next.js (App Router) with TypeScript and Tailwind CSS.
+
+## Architecture Rules
+- Use the App Router (`src/app/`) with server components by default.
+- Mark client components explicitly with `"use client"`.
+- API routes go in `src/app/api/`.
+- Shared components in `src/components/`.
+- Use TypeScript strict mode. No `any` types.
+
+## Commands
+- `npm run dev` — start dev server
+- `npm run build` — production build
+- `npm run lint` — ESLint
+- `npm test` — run tests
+
+## Style Guide
+- Tailwind CSS utility classes. No CSS modules.
+- Component files: PascalCase (e.g., `UserCard.tsx`).
+- Prefer named exports over default exports.
+
+## Task Context
+This project is orchestrated by orai. Task files are in `.agents/tasks/`.
+Do NOT modify files in `.agents/`.
