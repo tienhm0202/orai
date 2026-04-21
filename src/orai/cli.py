@@ -97,16 +97,50 @@ def install() -> None:
 
 @app.command()
 def init(
-    name: str = typer.Argument(..., help="Project name"),
+    name: Optional[str] = typer.Argument(None, help="Project name (new) or path to existing project (with --existing)"),
     template: str = typer.Option("nextjs", "--template", "-t", help="nextjs | python | node | go"),
     path: Path = typer.Option(".", "--path", "-p", help="Parent directory"),
+    existing: bool = typer.Option(False, "--existing", "-e", help="Initialize orai in an existing project directory"),
+    ai_analyze: bool = typer.Option(False, "--ai", help="Use AI to analyze existing codebase and generate architecture doc"),
 ) -> None:
-    """Scaffold a new project with /app dir, CLAUDE.md, and .agents/ structure."""
+    """Scaffold a new project or initialize orai in an existing project."""
     _check_claude_installed()
-    from orai.scaffold.engine import scaffold
 
-    project_root = scaffold(name, template, path)
-    console.print(f"[green]Project created at {project_root}[/green]")
+    if existing:
+        from orai.scaffold.existing import detect_project_info, scaffold_existing
+
+        project_root = path.resolve() if name is None or name == "." else Path(name).resolve()
+        if not project_root.exists():
+            console.print(f"[red]Directory not found: {project_root}[/red]")
+            raise typer.Exit(1)
+        if not project_root.is_dir():
+            console.print(f"[red]Not a directory: {project_root}[/red]")
+            raise typer.Exit(1)
+
+        console.print("[cyan]Detecting project info...[/cyan]")
+        info = detect_project_info(project_root)
+
+        console.print(
+            f"[green]Detected:[/green] {info.name} ({info.project_type})\n"
+            f"  Framework: {info.framework or '(none detected)'}\n"
+            f"  Language:  {info.language_stack.value if info.language_stack else '(none detected)'}\n"
+            f"  Has tests: {'yes' if info.has_tests else 'no'}\n"
+            f"  Description: {info.description[:80] + '...' if len(info.description) > 80 else info.description}"
+        )
+        console.print()
+
+        scaffold_existing(project_root, info, ai_analyze=ai_analyze)
+        console.print(f"[green]orai initialized at {project_root}[/green]")
+        console.print(f"[dim]Run 'orai plan {project_root}' to generate a task plan.[/dim]")
+    else:
+        from orai.scaffold.engine import scaffold
+
+        if name is None:
+            console.print("[red]Project name is required. Usage: orai init <name>[/red]")
+            raise typer.Exit(1)
+
+        project_root = scaffold(name, template, path)
+        console.print(f"[green]Project created at {project_root}[/green]")
 
 
 @app.command()
@@ -128,12 +162,14 @@ def plan(
     import json as _json
 
     from orai.config import ANSWERS_FILE
+    from orai.executor.state import StateManager
     from orai.planner.context import generate_and_save_context, generate_context
     from orai.planner.interview import interview
     from orai.planner.decompose import decompose
 
     project = project.resolve()
-    answers_path = project / "app" / ANSWERS_FILE
+    state = StateManager(project)
+    answers_path = state.agents_dir / ANSWERS_FILE
 
     # Parse product spec if provided
     product_spec_context = ""
@@ -529,13 +565,12 @@ def context(
     from orai.executor.state import StateManager
     from orai.planner.plan_state import generate_plan_state
 
-    project = project.resolve()
+    state = StateManager(project)
     plan_state = generate_plan_state(project)
 
-    state = StateManager(project)
     state.save_plan_state(plan_state)
 
-    output_path = project / "app" / "plan_state.json"
+    output_path = state.agents_dir / "plan_state.json"
     console.print(f"[green]Plan state saved to {output_path}[/green]")
     console.print(f"[dim]Project: {plan_state.project_name} | Status: {plan_state.overall_status}[/dim]")
     if plan_state.next_actionable_tasks:
@@ -639,10 +674,10 @@ def report(
     console.print("\n", table, sep="")
 
     # --- Document Graph Status ---
-    kb_index_path = project / "app" / KB_INDEX_FILE
+    kb_index_path = state.agents_dir / KB_INDEX_FILE
     if kb_index_path.exists():
         import json as _json
-        index = _json.loads((project / "app" / KB_INDEX_FILE).read_text())
+        index = _json.loads(kb_index_path.read_text())
         if index:
             console.print(f"\n[bold]Document Graph:[/bold] {len(index)} document(s)")
             doc_table = Table(show_header=True, header_style="bold")

@@ -268,9 +268,10 @@ def execute_task(
     try:
         # Ignore SIGINT in the child process so Ctrl+C doesn't kill the running task.
         # The parent catches SIGINT via ShutdownManager and stops AFTER this task finishes.
+        state = StateManager(project_root)
         process = subprocess.Popen(
             cmd,
-            cwd=str(project_root / "app"),
+            cwd=str(state.agents_dir),
             stdout=subprocess.PIPE,
             stderr=subprocess.PIPE,
             text=True,

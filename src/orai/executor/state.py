@@ -21,7 +21,18 @@ from orai.models import AgentProfile, AgentRole, AgentsConfig, OrchestrationConf
 class StateManager:
     def __init__(self, project_root: Path):
         self.project_root = project_root
-        self.app_dir = project_root / "app"
+        # Detect which .agents/ layout is in use:
+        # - Existing projects (orai init): .agents/ is under app/
+        # - Imported projects (orai init -e): .agents/ is at project root
+        app_agents = project_root / "app" / ".agents"
+        root_agents = project_root / ".agents"
+        if root_agents.exists():
+            self.agents_dir = project_root
+        elif app_agents.exists():
+            self.agents_dir = project_root / "app"
+        else:
+            self.agents_dir = project_root / "app"  # default for new projects
+        self.app_dir = self.agents_dir
         self.tasks_dir = self.app_dir / TASKS_DIR
 
     def load_phase(self, phase_num: int) -> Phase:
